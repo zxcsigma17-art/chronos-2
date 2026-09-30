@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>CHRÖNÖS — 3D-часы</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600&family=Sora:wght@300;400;600&family=Syncopate:wght@700&family=Unbounded:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#05070b;--abyss:#0d1420;--steel:#c9d3de;--brass:#d2a862;--lume:#7dffcf;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:inherit;margin:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{background:var(--ink);color:var(--steel);font:300 16px/1.6 Manrope,system-ui,sans-serif}
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
+header{position:fixed;top:calc(16px + env(safe-area-inset-top,0px));left:22px;font:700 14px Syncopate,Arial,sans-serif;letter-spacing:.3em;color:#fff;z-index:5;pointer-events:none}
+.s{min-height:100vh;min-height:100svh;display:flex;align-items:flex-end;padding:0 22px 140px;pointer-events:none;position:relative}
+.s div{max-width:340px;text-shadow:0 2px 24px #000,0 0 8px #000}
+h1,h2{font:700 clamp(26px,7.5vw,50px)/1.08 Syncopate,Arial,sans-serif;color:#fff;margin-bottom:12px;letter-spacing:-.01em}
+h2{font:600 clamp(18px,5vw,30px)/1.18 Unbounded,Syncopate,Arial,sans-serif}
+p{color:#d3dce6}
+small{display:block;margin-top:14px;color:var(--brass);font-size:13px}
+#bar{position:fixed;left:0;right:0;bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:0 12px;z-index:5}
+button{font:400 13px Manrope,system-ui,sans-serif;color:var(--steel);background:rgba(13,20,32,.74);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(201,211,222,.24);border-radius:99px;padding:10px 15px;cursor:pointer;transition:border-color .25s,background .25s,color .25s}
+button:hover{border-color:var(--brass)}
+button:focus-visible{outline:2px solid var(--lume);outline-offset:2px}
+button.on{border-color:var(--brass);background:rgba(210,168,98,.2);color:#fff}
+.sep{width:1px;background:rgba(201,211,222,.2);margin:4px 2px}
+.s{z-index:6}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:4;background:radial-gradient(ellipse at 50% 45%,transparent 45%,rgba(0,0,0,.6) 100%),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E")}
+#hero{transition:opacity .4s}#hero.out{opacity:0}
+dl{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin-top:18px;padding-top:14px;border-top:1px solid rgba(210,168,98,.5);font-size:13px}
+dt{color:var(--brass)}dd{color:#e6edf5}
+.sw{display:flex;gap:12px;margin-top:16px;pointer-events:auto}
+button.dot{width:28px;height:28px;padding:0;border-radius:50%;border:2px solid rgba(255,255,255,.28)}
+button.dot.on{border-color:#fff;transform:scale(1.18)}
+@media(min-width:800px){.s{align-items:center;padding:0 7vw 0}.s div{max-width:380px}}
+</style></head><body>
+<canvas id="c" aria-label="Интерактивные 3D-часы. Потяните, чтобы повернуть."></canvas>
+<header>CHRÖNÖS</header>
+<main>
+<section class="s"><div id="hero"><h1 id="hn"></h1><p id="ht"></p><dl id="sp"></dl><div class="sw" id="sw"></div><small>Потяните, чтобы повернуть. Прокрутите, чтобы приблизить.</small></div></section>
+<section class="s"><div><h2>Циферблат «солнечные лучи»</h2><p>Радиальная шлифовка пускает по циферблату единую полосу света. Каждая метка заполнена люминофором, который накапливает дневной свет и светится в темноте.</p></div></section>
+<section class="s"><div><h2>Скульптурный корпус</h2><p>Полированные фаски встречаются с матовой шлифовкой боковин, а ушки изгибаются к запястью. Поворачивайте часы и следите за светом вдоль кромки.</p></div></section>
+<section class="s"><div><h2>Автоматический механизм</h2><p>Золотой ротор подзаводит пружину при каждом движении руки. Вид разворачивается к задней крышке, и вы видите, как ротор вращается за стеклом.</p></div></section>
+<section class="s"><div><h2>Каждая деталь отдельно</h2><p>Задняя крышка, корпус, циферблат, стрелки, безель и стекло. Разберите часы на части или выключите свет, чтобы увидеть люминофор.</p></div></section>
+</main>
+<nav id="bar"><span id="chips" style="display:contents"></span><i class="sep"></i><button id="ex">Разобрать</button><button id="lu">Выключить свет</button><button id="so">Включить звук</button></nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const CFG={ // Настройки сцены
+ fov:30,     // угол обзора камеры
+ dist:190,   // базовая дистанция камеры, мм
+ exp:1.15,   // экспозиция при обычном свете
+ dust:260,   // количество пылинок
+ explode:1   // множитель разлёта деталей
+};
+const WATCHES=[ // Три модели часов
+{n:'Abyss 300',tag:'Дайверские часы 42 мм из стали. Керамический безель, водозащита до 300 м.',s:1,sw:20,strap:'bracelet',sc:0xc4ccd6,hand:0xe9eef5,acc:0xff6a2b,case:{c:0xcfd6de,m:1,r:.26},d1:'#1f56b8',d2:'#040c22',ink:'#eef4ff',idx:'#dfe6ee',lume:'#7dffcf',bz:{c:'#0a2666',ink:'#f2f6ff'},notch:1,t1:'CHRÖNÖS',t2:'DIVER 300 M',hl:0x2b5cff,v:[{nm:'Океанский синий',d1:'#1f56b8',d2:'#040c22',ink:'#eef4ff',idx:'#dfe6ee'},{nm:'Графит',d1:'#4a4f57',d2:'#0b0c0f',ink:'#f2f2f2',idx:'#dfe3e8'},{nm:'Изумруд',d1:'#1d7a5a',d2:'#03130d',ink:'#eafff4',idx:'#dfe6ee'}],sp:[['Корпус','42 мм, сталь 316L'],['Механизм','Автоподзавод, запас хода 38 ч'],['Водозащита','До 300 м'],['Стекло','Выпуклое сапфировое']]},
+{n:'Aurum',tag:'Классические часы 38 мм из розового золота. Циферблат цвета шампань, ремешок из телячьей кожи.',s:.92,sw:19,strap:'leather',sc:0x4b2a18,hand:0xd6a25e,acc:0xa8281a,case:{c:0xdcaa72,m:1,r:.2},d1:'#f4e7cb',d2:'#b99b63',ink:'#3b2a14',idx:'#b8853f',lume:'#ffe2a0',bz:0,notch:0,t1:'CHRÖNÖS',t2:'AUTOMATIC',hl:0xd9903a,v:[{nm:'Шампань',d1:'#f4e7cb',d2:'#b99b63',ink:'#3b2a14',idx:'#b8853f'},{nm:'Сланец',d1:'#7d8794',d2:'#2a3038',ink:'#f2f5f8',idx:'#d9dde2'},{nm:'Бордо',d1:'#8a2a3a',d2:'#2a0710',ink:'#f7e9e4',idx:'#d6a25e'}],sp:[['Корпус','38 мм, розовое золото 18 карат'],['Механизм','Автоподзавод, запас хода 42 ч'],['Водозащита','До 50 м'],['Ремешок','Телячья кожа']]},
+{n:'Nocturne',tag:'Сталь 44 мм с чёрным покрытием. Крупные люминесцентные метки светятся всю ночь.',s:1.06,sw:22,strap:'rubber',sc:0x101114,hand:0x30343b,acc:0x7dffcf,case:{c:0x1b1d23,m:.85,r:.38},d1:'#22252b',d2:'#040507',ink:'#a9bcc4',idx:'#30343b',lume:'#7dffcf',bz:{c:'#08090c',ink:'#7dffcf'},notch:1,t1:'CHRÖNÖS',t2:'NIGHT 500 M',hl:0x18c9a0,v:[{nm:'Оникс',d1:'#22252b',d2:'#040507',ink:'#a9bcc4',idx:'#30343b'},{nm:'Глубокий синий',d1:'#12324f',d2:'#020a12',ink:'#bfe6ff',idx:'#30343b'},{nm:'Медь',d1:'#5a2f1c',d2:'#0d0503',ink:'#ffd9b8',idx:'#30343b'}],sp:[['Корпус','44 мм, сталь с чёрным покрытием PVD'],['Механизм','Автоподзавод, запас хода 40 ч'],['Водозащита','До 500 м'],['Ремешок','Фторкаучук']]}];
+const $=id=>document.getElementById(id),reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const R=new THREE.WebGLRenderer({canvas:$('c'),antialias:true});
+R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;R.toneMapping=THREE.ACESFilmicToneMapping;
+const S=new THREE.Scene();S.background=new THREE.Color(0x05070b);
+const cam=new THREE.PerspectiveCamera(CFG.fov,1,1,700);
+// Студийное окружение для отражений в металле
+const envS=new THREE.Scene();envS.add(new THREE.Mesh(new THREE.SphereGeometry(100,32,16),new THREE.MeshBasicMaterial({color:0x0a1018,side:THREE.BackSide})));
+[[60,30,[0,70,40],0xffffff,6],[20,80,[-70,0,20],0xbfd8ff,4],[20,80,[70,10,-10],0xffd9a0,3],[80,10,[0,-60,50],0xffffff,1.5]].forEach(([w,h,p,c,i])=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({color:new THREE.Color(c).multiplyScalar(i),side:THREE.DoubleSide}));m.position.set(...p);m.lookAt(0,0,0);envS.add(m);});
+S.environment=new THREE.PMREMGenerator(R).fromScene(envS,.03,.1,200).texture;
+const key=new THREE.DirectionalLight(0xfff0dc,1.3);key.position.set(40,60,80);
+const rim=new THREE.DirectionalLight(0x5b8dff,1.1);rim.position.set(-80,20,-60);S.add(key,rim);
+// Пылинки в воздухе
+const dp=new Float32Array(CFG.dust*3);for(let i=0;i<dp.length;i++)dp[i]=(Math.random()-.5)*(i%3==2?120:220);
+const dg=new THREE.BufferGeometry();dg.setAttribute('position',new THREE.BufferAttribute(dp,3));
+const dust=new THREE.Points(dg,new THREE.PointsMaterial({size:.7,color:0x9fc4ff,transparent:true,opacity:.45,depthWrite:false}));if(!reduce)S.add(dust);
+
+const M=(c,m,r,o)=>new THREE.MeshStandardMaterial(Object.assign({color:c,metalness:m,roughness:r},o));
+const lathe=(p,n=128)=>{const g=new THREE.LatheGeometry(p.map(v=>new THREE.Vector2(v[0],v[1])),n);g.rotateX(Math.PI/2);return g;};
+const cnv=n=>{const k=document.createElement('canvas');k.width=k.height=n;return k;};
+const tex=k=>{const t=new THREE.CanvasTexture(k);t.encoding=THREE.sRGBEncoding;t.anisotropy=8;return t;};
+const rect=(w,h)=>{const s=new THREE.Shape();s.moveTo(-w/2,-h/2);s.lineTo(w/2,-h/2);s.lineTo(w/2,h/2);s.lineTo(-w/2,h/2);s.closePath();return s;};
+
+// Световое гало за часами
+const hc=cnv(256),hg=hc.getContext('2d'),hgr=hg.createRadialGradient(128,128,0,128,128,128);hgr.addColorStop(0,'rgba(255,255,255,.55)');hgr.addColorStop(.45,'rgba(255,255,255,.12)');hgr.addColorStop(1,'rgba(255,255,255,0)');hg.fillStyle=hgr;hg.fillRect(0,0,256,256);
+const GRN=new THREE.Color(0x18e0a8),halo=new THREE.Mesh(new THREE.PlaneGeometry(1,1),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(hc),color:0x2b5cff,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,toneMapped:false}));halo.position.z=-90;S.add(halo);
+function dialTex(c){
+ const N=1024,h=N/2,a=cnv(N),e=cnv(N),g=a.getContext('2d'),l=e.getContext('2d');
+ const rg=g.createRadialGradient(h,h,30,h,h,h);rg.addColorStop(0,c.d1);rg.addColorStop(1,c.d2);g.fillStyle=rg;g.fillRect(0,0,N,N);
+ if(g.createConicGradient){const cg=g.createConicGradient(0,h,h);for(let i=0;i<=36;i++)cg.addColorStop(i/36,i%2?'rgba(255,255,255,.11)':'rgba(0,0,0,.2)');g.fillStyle=cg;g.fillRect(0,0,N,N);}
+ l.fillStyle='#000';l.fillRect(0,0,N,N);g.strokeStyle=c.ink;g.globalAlpha=.7;
+ for(let i=0;i<60;i++){g.save();g.translate(h,h);g.rotate(i*Math.PI/30);g.lineWidth=i%5?3:6;g.beginPath();g.moveTo(0,-h*.95);g.lineTo(0,-h*(i%5?.91:.88));g.stroke();g.restore();}
+ g.globalAlpha=1;
+ for(let i=0;i<12;i++){if(i==3)continue;const w=i%3?34:46;for(const x of [g,l]){x.save();x.translate(h,h);x.rotate(i*Math.PI/6);if(x===g){x.fillStyle=c.idx;x.fillRect(-w/2,-h*.83,w,h*.2);}x.fillStyle=x===g?'#e9f0dc':c.lume;x.fillRect(-w/2+7,-h*.83+7,w-14,h*.2-14);x.restore();}}
+ g.fillStyle=c.ink;g.textAlign='center';g.font='700 50px Syncopate,Arial,sans-serif';g.fillText(c.t1,h,h-h*.34);g.font='400 28px Sora,Arial,sans-serif';g.fillText(c.t2,h,h+h*.42);
+ const dx=h+h*.72,dy=h;g.fillStyle='rgba(0,0,0,.35)';g.fillRect(dx-62,dy-40,124,80);g.fillStyle='#f4f1e8';g.fillRect(dx-56,dy-34,112,68);g.fillStyle='#14171c';g.font='600 52px Sora,Arial,sans-serif';g.textBaseline='middle';g.fillText(String(new Date().getDate()),dx,dy+3);g.textBaseline='alphabetic';g.strokeStyle=c.idx;g.lineWidth=6;g.strokeRect(dx-62,dy-40,124,80);
+ return [a,e];}
+function ringTex(c){
+ const N=1024,h=N/2,a=cnv(N),e=cnv(N),g=a.getContext('2d'),l=e.getContext('2d');
+ g.fillStyle=c.bz.c;g.fillRect(0,0,N,N);l.fillStyle='#000';l.fillRect(0,0,N,N);
+ g.fillStyle=c.bz.ink;g.textAlign='center';g.textBaseline='middle';g.font='700 44px Sora,Arial,sans-serif';
+ for(let i=0;i<60;i++){g.save();g.translate(h,h);g.rotate(i*Math.PI/30);
+  if(i==0){g.beginPath();g.arc(0,-h*.935,26,0,7);g.fill();l.save();l.translate(h,h);l.fillStyle=c.lume;l.beginPath();l.arc(0,-h*.935,20,0,7);l.fill();l.restore();}
+  else if(i%10==0)g.fillText(String(i),0,-h*.935);else g.fillRect(-2,-h*.99,4,i%5?16:30);
+  g.restore();}
+ return [a,e];}
+function backTex(){
+ const N=512,h=N/2,k=cnv(N),g=k.getContext('2d'),rg=g.createRadialGradient(h,h,10,h,h,h);rg.addColorStop(0,'#3a3f47');rg.addColorStop(1,'#12151a');g.fillStyle=rg;g.fillRect(0,0,N,N);
+ for(const [x,y,r,n] of [[.3,.35,.22,18],[.68,.4,.16,14],[.5,.68,.26,22],[.75,.72,.1,10],[.28,.7,.11,10]]){g.save();g.translate(x*N,y*N);g.strokeStyle=g.fillStyle='#d6a85a';g.lineWidth=8;g.beginPath();g.arc(0,0,r*N*.78,0,7);g.stroke();for(let i=0;i<n;i++){g.rotate(6.283/n);g.fillRect(-6,-r*N,12,r*N*.22);}g.fillStyle='#b3243b';g.beginPath();g.arc(0,0,10,0,7);g.fill();g.restore();}
+ return k;}
+
+function build(c){
+ const G=new THREE.Group(),P={},L=[];
+ const part=(k,ex)=>{const g=new THREE.Group();g.userData.ex=new THREE.Vector3(...ex);P[k]=g;G.add(g);return g;};
+ const metal=M(c.case.c,c.case.m,c.case.r),brush=M(c.case.c,c.case.m,Math.min(.6,c.case.r+.16));
+ const lm=col=>{const m=M(new THREE.Color(col).lerp(new THREE.Color(0xffffff),.65),0,.6,{emissive:new THREE.Color(col),emissiveIntensity:.35});L.push(m);return m;};
+ // Корпус, ушки и ремешок
+ const cs=part('case',[0,0,-16]);
+ cs.add(new THREE.Mesh(lathe([[0,-4.5],[18.6,-4.5],[20,-3.7],[20.5,-2],[20.5,2.6],[19.6,3.8],[17.6,4.3],[0,4.3]]),brush));
+ const lg=new THREE.ExtrudeGeometry(rect(4.4,10),{depth:2.4,bevelEnabled:true,bevelThickness:.9,bevelSize:.9,bevelSegments:3});
+ for(const sx of [-1,1])for(const sy of [-1,1]){const m=new THREE.Mesh(lg,metal);m.position.set(sx*(c.sw/2+2.2),sy*19.4,-3);m.rotation.x=sy>0?-.16:.16;cs.add(m);}
+ const br=c.strap=='bracelet',sm=M(c.sc,br?1:.05,br?.33:.7),n=br?8:14,Ln=br?6.4:4,gap=br?.5:.2,t=br?2.6:2.4,AR=24;
+ for(const sd of [1,-1])for(let i=0;i<n;i++){
+  const f=(i+.5)*Ln/AR,o=new THREE.Group();o.position.set(0,sd*(25.8+AR*Math.sin(f)),-3.6-AR*(1-Math.cos(f)));o.rotation.x=-sd*f;
+  if(br){o.add(new THREE.Mesh(new THREE.BoxGeometry(c.sw*.48,Ln-gap,t),sm));for(const q of [-1,1]){const b=new THREE.Mesh(new THREE.BoxGeometry(c.sw*.24,Ln-gap,t*.9),sm);b.position.x=q*c.sw*.37;o.add(b);}}
+  else o.add(new THREE.Mesh(new THREE.BoxGeometry(c.sw,Ln-gap,t),sm));
+  cs.add(o);}
+ // Заводная головка
+ const cr=part('crown',[16,0,0]);
+ const c1=new THREE.Mesh(new THREE.CylinderGeometry(1.9,1.9,3.4,28),metal);c1.rotation.z=Math.PI/2;c1.position.set(21.8,0,.3);
+ const c2=new THREE.Mesh(new THREE.CylinderGeometry(2.1,2.1,2.4,16),M(c.case.c,c.case.m,c.case.r,{flatShading:true}));c2.rotation.z=Math.PI/2;c2.position.set(22.6,0,.3);cr.add(c1,c2);
+ // Безель
+ const bz=part('bezel',[0,0,38]);
+ bz.add(new THREE.Mesh(lathe([[17,4.4],[21,4.4],[21.3,5.4],[20.8,6.4],[18.4,6.6],[17,5.6]]),metal));
+ if(c.notch){const im=new THREE.InstancedMesh(new THREE.BoxGeometry(.9,1.4,2.6),metal,60),o=new THREE.Object3D();for(let i=0;i<60;i++){const a=i/60*6.2832;o.position.set(Math.cos(a)*21.2,Math.sin(a)*21.2,5.4);o.rotation.z=a;o.updateMatrix();im.setMatrixAt(i,o.matrix);}bz.add(im);}
+ if(c.bz){const [a,e]=ringTex(c),m=new THREE.MeshPhysicalMaterial({map:tex(a),emissiveMap:tex(e),emissive:0xffffff,emissiveIntensity:.35,roughness:.18,metalness:.1,clearcoat:1,clearcoatRoughness:.05});L.push(m);const r=new THREE.Mesh(new THREE.RingGeometry(18.3,20.8,128),m);r.position.z=6.62;bz.add(r);}
+ // Циферблат
+ const dl=part('dial',[0,0,10]),[da,de]=dialTex(c);
+ const dm=new THREE.MeshStandardMaterial({map:tex(da),emissiveMap:tex(de),emissive:0xffffff,emissiveIntensity:.35,roughness:.45,metalness:.55});L.push(dm);
+ const d=new THREE.Mesh(new THREE.CircleGeometry(17.4,96),dm);d.position.z=4.4;dl.add(d);
+ // Стрелки
+ const hd=part('hands',[0,0,26]),hm=M(c.hand,1,.25),lumeM=lm(c.lume);
+ const mk=(len,tail,w,z)=>{const s=new THREE.Shape();s.moveTo(-w*.5,-tail);s.lineTo(-w,0);s.lineTo(-w*.45,len*.92);s.lineTo(0,len);s.lineTo(w*.45,len*.92);s.lineTo(w,0);s.lineTo(w*.5,-tail);s.closePath();
+  const g=new THREE.Group(),ge=new THREE.ExtrudeGeometry(s,{depth:.35,bevelEnabled:false});g.add(new THREE.Mesh(ge,hm));
+  const inl=new THREE.Mesh(ge,lumeM);inl.scale.set(.5,.68,1);inl.position.set(0,len*.06,.36);g.add(inl);g.position.z=z;hd.add(g);return g;};
+ const H={h:mk(12,4,1.9,4.9),m:mk(17.5,4.5,1.5,5.4)};
+ const sec=new THREE.Group(),am=M(c.acc,.8,.3);sec.position.z=5.9;
+ const sh=new THREE.Mesh(new THREE.BoxGeometry(.28,24,.2),am);sh.position.y=6;
+ const cw=new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.1,.25,24),am);cw.rotation.x=Math.PI/2;cw.position.y=-4.5;
+ const tp=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.26,24),lumeM);tp.rotation.x=Math.PI/2;tp.position.y=12.5;
+ sec.add(sh,cw,tp);hd.add(sec);H.s=sec;
+ const cap=new THREE.Mesh(new THREE.CylinderGeometry(1,1,1.6,24),metal);cap.rotation.x=Math.PI/2;cap.position.z=6.3;hd.add(cap);
+ // Сапфировое стекло
+ part('crystal',[0,0,54]).add(new THREE.Mesh(lathe([[16.9,5.4],[16.5,6.3],[12,7.1],[6,7.6],[0,7.75]]),new THREE.MeshPhysicalMaterial({color:0xffffff,metalness:0,roughness:.02,transparent:true,opacity:.14,clearcoat:1,envMapIntensity:2.2,depthWrite:false,side:THREE.DoubleSide})));
+ // Задняя крышка и ротор
+ const bk=part('back',[0,0,-46]);
+ const bt=new THREE.Mesh(new THREE.CircleGeometry(17.4,64),new THREE.MeshStandardMaterial({map:tex(backTex()),metalness:.8,roughness:.35}));bt.rotation.y=Math.PI;bt.position.z=-4.55;
+ const rot=new THREE.Mesh(new THREE.CircleGeometry(14.5,48,0,Math.PI),M(0xd6a85a,1,.2,{side:THREE.DoubleSide}));rot.position.z=-4.9;bk.add(bt,rot);
+ G.scale.setScalar(c.s);
+ return {G,P,H,rot,L,hl:c.hl};}
+function dispose(o){o.traverse(m=>{if(m.geometry)m.geometry.dispose();if(m.material)[].concat(m.material).forEach(x=>{['map','emissiveMap'].forEach(k=>x[k]&&x[k].dispose());x.dispose();});});}
+
+let cur=null,idx=0,want=0,vi=0,wantV=0,A=reduce?1:0,wantEx=false,lume=false,Lv=0;
+function mount(i,v){const w=WATCHES[i];if(cur){S.remove(cur.G);dispose(cur.G);}cur=build(Object.assign({},w,w.v[v]));S.add(cur.G);$('hn').textContent=w.n;$('ht').textContent=w.tag;
+ $('sp').innerHTML=w.sp.map(r=>'<dt>'+r[0]+'</dt><dd>'+r[1]+'</dd>').join('');const sw=$('sw');sw.innerHTML='';
+ w.v.forEach((x,j)=>{const b=document.createElement('button');b.className='dot'+(j==v?' on':'');b.style.background='radial-gradient(circle at 35% 30%,'+x.d1+','+x.d2+')';b.setAttribute('aria-label','Циферблат: '+x.nm);b.onclick=()=>{wantV=j;};sw.appendChild(b);});}
+const chips=[];
+WATCHES.forEach((w,i)=>{const b=document.createElement('button');b.textContent=w.n;b.onclick=()=>{want=i;wantV=0;chips.forEach((x,j)=>x.classList.toggle('on',j==i));};$('chips').appendChild(b);chips.push(b);});
+chips[0].classList.add('on');
+$('ex').onclick=e=>{wantEx=!wantEx;e.target.textContent=wantEx?'Собрать':'Разобрать';e.target.classList.toggle('on',wantEx);};
+$('lu').onclick=e=>{lume=!lume;e.target.textContent=lume?'Включить свет':'Выключить свет';e.target.classList.toggle('on',lume);};
+// Тиканье механизма (синтез Web Audio, 8 ударов в секунду)
+let ac=null,tk=null;
+$('so').onclick=e=>{const on=!tk;e.target.textContent=on?'Выключить звук':'Включить звук';e.target.classList.toggle('on',on);
+ if(!on){clearInterval(tk);tk=null;return;}
+ ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();
+ const nb=ac.createBuffer(1,ac.sampleRate*.02,ac.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.exp(-i/(d.length*.12));
+ let n=0;tk=setInterval(()=>{const b=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();b.buffer=nb;f.type='bandpass';f.frequency.value=n++%2?3200:2600;f.Q.value=4;g.gain.value=.5;b.connect(f);f.connect(g);g.connect(ac.destination);b.start();},125);};
+
+// Ключевые кадры камеры: [дистанция, наклон X, поворот Y]
+const KF=[[1,-.32,.55],[.62,-.05,0],[.8,.12,1.35],[.72,.05,3.14],[.95,.15,5.7]];
+function kf(p){const n=KF.length-1,t=Math.min(p*n,n-1e-4),i=Math.floor(t),f=t-i,s=f*f*(3-2*f);return KF[i].map((v,j)=>v+(KF[i+1][j]-v)*s);}
+function rs(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix();}
+addEventListener('resize',rs);rs();
+let px=null,py=0,dY=0,dX=0,mxn=0,myn=0,pxs=0,pys=0;
+$('c').addEventListener('pointerdown',e=>{px=e.clientX;py=e.clientY;});
+addEventListener('pointermove',e=>{mxn=e.clientX/innerWidth-.5;myn=e.clientY/innerHeight-.5;if(px==null)return;dY+=(e.clientX-px)*.009;dX=Math.max(-.8,Math.min(.8,dX+(e.clientY-py)*.005));px=e.clientX;py=e.clientY;});
+addEventListener('pointerup',()=>px=null);addEventListener('pointercancel',()=>px=null);
+
+let last=performance.now(),T=0,sp=0;
+function frame(now){
+ requestAnimationFrame(frame);
+ const dt=Math.min((now-last)/1000,.05);last=now;T+=dt;
+ const mx=Math.max(1,document.documentElement.scrollHeight-innerHeight);
+ sp+=(Math.min(1,scrollY/mx)-sp)*(1-Math.exp(-dt*5));
+ let tg=wantEx?0:1;
+ const swp=want!==idx||wantV!==vi;if(swp){tg=0;if(A<.05){idx=want;vi=wantV;mount(idx,vi);}}
+ $('hero').classList.toggle('out',swp);
+ A+=(tg-A)*(1-Math.exp(-dt*(reduce?30:2.6)));
+ Lv+=((lume?1:0)-Lv)*(1-Math.exp(-dt*4));
+ const e=1-A;
+ for(const k in cur.P){const p=cur.P[k];p.position.copy(p.userData.ex).multiplyScalar(e*CFG.explode);}
+ cur.P.bezel.rotation.z=e*1.6;
+ const d=new Date(),s=d.getSeconds()+d.getMilliseconds()/1e3,mi=d.getMinutes()+s/60,hr=d.getHours()%12+mi/60;
+ cur.H.s.rotation.z=-s/60*6.2832;cur.H.m.rotation.z=-mi/60*6.2832;cur.H.h.rotation.z=-hr/12*6.2832;
+ cur.rot.rotation.z+=dt*(.6+e*5);
+ R.toneMappingExposure=CFG.exp*(1-.78*Lv);key.intensity=1.3*(1-.8*Lv);rim.intensity=1.1*(1-.8*Lv);
+ cur.L.forEach(m=>m.emissiveIntensity=.35+5*Lv);
+ const asp=innerWidth/innerHeight,[f,rx,ry]=kf(sp),dist=CFG.dist*Math.max(1,.6/asp)*f;
+ cam.position.set(0,0,dist);
+ const vh=2*dist*Math.tan(CFG.fov*Math.PI/360),vw=vh*asp,G=cur.G;
+ G.position.set(asp>1.1?vw*.17:0,asp>1.1?0:vh*.16,0);
+ dY*=Math.exp(-dt*.7);dX*=Math.exp(-dt*.7);
+ G.rotation.set(rx+dX+pys*.18+Math.sin(T*.5)*.04,ry+dY+pxs*.3+Math.sin(T*.35)*.12+e*1.4,0);
+ pxs+=(mxn-pxs)*(1-Math.exp(-dt*4));pys+=(myn-pys)*(1-Math.exp(-dt*4));
+ key.position.set(60*Math.sin(T*.45),50+15*Math.sin(T*.3),80);
+ halo.position.set(G.position.x,G.position.y,-90);halo.scale.setScalar(dist*1.15);halo.material.color.setHex(cur.hl).lerp(GRN,Lv);halo.material.opacity=1-.5*Lv;
+ if(!reduce){const a=dg.attributes.position;for(let i=1;i<a.array.length;i+=3){a.array[i]+=dt*2;if(a.array[i]>110)a.array[i]=-110;}a.needsUpdate=true;}
+ R.render(S,cam);}
+Promise.race([Promise.all([document.fonts.load('700 40px Syncopate'),document.fonts.load('400 28px Sora')]),new Promise(r=>setTimeout(r,1500))]).catch(()=>{}).then(()=>{mount(0,0);requestAnimationFrame(frame);});
+</script></body></html>
